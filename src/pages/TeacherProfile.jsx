@@ -186,32 +186,73 @@ const TeacherProfile = () => {
           </div>
         </div>
       )} */}
-      <div className="flex-1 min-w-0 text-center sm:text-left">
+      {teacher && (
+  <div
+    className="
+      max-w-5xl mx-auto mb-12
+      bg-white/5 border border-white/10
+      rounded-2xl p-6
 
-  {/* NAME */}
-  <h1 className="text-xl sm:text-2xl font-bold truncate">
-    {teacher.name}
-  </h1>
+      flex flex-col sm:flex-row
+      gap-5 items-center sm:items-start
+      text-center sm:text-left
 
-  {/* DESIGNATION */}
-  <p className="
-    text-indigo-400 text-sm sm:text-base
-    break-all
-    line-clamp-2
-  ">
-    {teacher.designation}
-  </p>
+      overflow-hidden
+    "
+  >
 
-  {/* ABOUT */}
-  <p className="
-    text-gray-400 mt-2 text-sm sm:text-base
-    break-all
-    line-clamp-3 sm:line-clamp-none
-  ">
-    {teacher.about}
-  </p>
+    {/* 🔥 PROFILE IMAGE */}
+    <img
+      src={
+        teacher.imageId
+          ? storage
+              .getFileView(conf.appwriteBucketId, teacher.imageId)
+              .toString()
+          : "https://via.placeholder.com/150"
+      }
+      alt="profile"
+      className="
+        w-24 h-24 sm:w-28 sm:h-28
+        rounded-full object-cover
+        border border-white/20
+        flex-shrink-0
+      "
+      onError={(e) => {
+        e.target.src = "https://via.placeholder.com/150";
+      }}
+    />
 
-</div>
+    {/* 🔥 CONTENT */}
+    <div className="flex-1 min-w-0">
+
+      {/* NAME */}
+      <h1 className="text-xl sm:text-2xl font-bold truncate">
+        {teacher.name}
+      </h1>
+
+      {/* DESIGNATION */}
+      <p
+        className="
+          text-indigo-400 text-sm sm:text-base
+          break-all line-clamp-2
+        "
+      >
+        {teacher.designation}
+      </p>
+
+      {/* ABOUT */}
+      <p
+        className="
+          text-gray-400 mt-2 text-sm sm:text-base
+          break-all line-clamp-3 sm:line-clamp-none
+        "
+      >
+        {teacher.about}
+      </p>
+
+    </div>
+  </div>
+)}
 
       {/* SECTIONS */}
       {TYPES.map((type) => (
