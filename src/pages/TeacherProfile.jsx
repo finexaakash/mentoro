@@ -166,7 +166,7 @@ const TeacherProfile = () => {
       </div>
 
       {/* TEACHER INFO */}
-      {teacher && (
+      {/* {teacher && (
         <div className="max-w-5xl mx-auto mb-12 bg-white/5 border border-white/10 rounded-2xl p-6 flex gap-6 items-center">
           <img
             src={
@@ -185,7 +185,58 @@ const TeacherProfile = () => {
             <p className="text-gray-400 mt-2">{teacher.about}</p>
           </div>
         </div>
-      )}
+      )} */}
+      {teacher && (
+  <div
+    className="
+      max-w-5xl mx-auto mb-12
+      bg-white/5 border border-white/10
+      rounded-2xl p-6
+
+      flex flex-col sm:flex-row
+      gap-5 items-center sm:items-start
+      text-center sm:text-left
+    "
+  >
+
+    {/* IMAGE */}
+    <img
+      src={
+        teacher.imageId
+          ? storage
+              .getFileView(conf.appwriteBucketId, teacher.imageId)
+              .toString()
+          : "https://via.placeholder.com/150"
+      }
+      className="
+        w-24 h-24 sm:w-28 sm:h-28
+        rounded-full object-cover
+        flex-shrink-0
+      "
+    />
+
+    {/* CONTENT */}
+    <div className="flex-1 min-w-0">
+
+      <h1 className="text-xl sm:text-2xl font-bold truncate">
+        {teacher.name}
+      </h1>
+
+      <p className="text-indigo-400 text-sm sm:text-base truncate">
+        {teacher.designation}
+      </p>
+
+      <p className="
+        text-gray-400 mt-2 text-sm sm:text-base
+        line-clamp-3 sm:line-clamp-none
+        break-words
+      ">
+        {teacher.about}
+      </p>
+
+    </div>
+  </div>
+)}
 
       {/* SECTIONS */}
       {TYPES.map((type) => (
