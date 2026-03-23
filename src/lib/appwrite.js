@@ -8,5 +8,5 @@ console.log("URL:", import.meta.env.VITE_APPWRITE_URL);
 
 const account = new Account(client);
 const databases = new Databases(client);
-const storage = new Storage(client);   // ✅ added
+const storage = new Storage(client);   
 export { client, account, databases, storage };

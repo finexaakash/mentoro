@@ -273,7 +273,7 @@ const Profile = () => {
                 
                 <div
                   key={item.label}
-                  // className="bg-white/5 border border-white/10 p-6 rounded-xl text-center hover:scale-105 hover:bg-white/10 transition"
+                  
                     className="
               relative group
               p-6 rounded-xl text-center
@@ -319,18 +319,7 @@ const Profile = () => {
                 {profile ? "Edit Profile" : "Create Profile"}
               </h2>
 
-              {/* <div className="flex items-center gap-4">
-                
-                <img src={imageUrl} className="w-16 h-16 rounded-full" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  {...register("image")}
-                  onChange={(e) =>
-                    setPreview(URL.createObjectURL(e.target.files[0]))
-                  }
-                />
-              </div> */}
+              
               <div className="flex items-center gap-4">
 
   {/* IMAGE */}
@@ -378,12 +367,7 @@ const Profile = () => {
               />
 
               <div className="flex gap-3">
-                {/* <button
-                  disabled={saving}
-                  className="px-5 py-2 bg-indigo-500 rounded-lg"
-                >
-                  {saving ? "Saving..." : "Save"}
-                </button> */}
+                
                 <button
   disabled={saving}
   className={`
@@ -401,13 +385,7 @@ const Profile = () => {
 </button>
 
                 {profile && (
-                  // <button
-                  //   type="button"
-                  //   onClick={() => setEditMode(false)}
-                  //   className="px-5 py-2 border border-white/20 rounded-lg"
-                  // >
-                  //   Cancel
-                  // </button>
+                  
                   <button
   type="button"
   onClick={() => setEditMode(false)}

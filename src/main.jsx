@@ -8,7 +8,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import Home from "./pages/Home.jsx";
 import { AuthLayout, Login } from "./components";
-// import AddPost from "./pages/AddPost";
 import Signup from "./pages/Signup.jsx";
 import Teachers from "./pages/Teacher.jsx"
 import Profile from "./pages/Profile.jsx";
@@ -21,10 +20,7 @@ import EditResource from "./pages/EditResource.jsx";
 import ExploreResources from "./pages/ExploreResources";
 import NotFound from "./pages/NotFound.jsx";
 
-// import EditPost from "./pages/EditPost";
-// import Post from "./pages/Post";
-// import AllPosts from "./pages/AllPosts";
-// import Profile from "./pages/Profile";
+
 
 account.get().catch(() => {
   console.log("No active session");
@@ -36,9 +32,7 @@ const router = createBrowserRouter([
     element: <App />,    
     children: [
     { path: "/", element: <Home /> },
-    // { path:"/profile", element:(
-    // <Profile />)
-    // },
+    
     { path: "/profile", element: <Profile /> },
       { path: "/teachers", element: <Teachers /> },
       {
@@ -80,31 +74,7 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      // {
-      //   path: "/all-posts",
-      //   element: (
-      //     <AuthLayout authentication>
-      //       <AllPosts />
-      //     </AuthLayout>
-      //   ),
-      // },
-      // {
-      //   path: "/add-post",
-      //   element: (
-      //     <AuthLayout authentication>
-      //       <AddPost />
-      //     </AuthLayout>
-      //   ),
-      // },
-      // {
-      //   path: "/edit-post/:slug",
-      //   element: (
-      //     <AuthLayout authentication>
-      //       <EditPost />
-      //     </AuthLayout>
-      //   ),
-      // },
-      // { path: "/post/:slug", element: <Post /> },
+      
     ],
   },
 ]);
