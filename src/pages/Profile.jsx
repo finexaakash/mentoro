@@ -294,14 +294,27 @@ const Profile = () => {
     </div>
 
     {/* 🔥 ABOUT */}
-    <p
+    {/* <p
       className="
         text-gray-400 mt-6 text-sm sm:text-base
         break-all line-clamp-3 sm:line-clamp-none
       "
     >
       {profile.about}
-    </p>
+    </p> */}
+    <p
+  className="
+    text-gray-400 mt-6 text-sm sm:text-base
+
+    text-center
+    max-w-xl mx-auto
+
+    break-words
+    leading-relaxed
+  "
+>
+  {profile.about}
+</p>
 
     {/* 🔥 STATS */}
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-8">
@@ -405,6 +418,7 @@ const Profile = () => {
               />
 
               <textarea
+              
                 defaultValue={profile?.about}
                 placeholder="About"
                 {...register("about", { required: true })}
