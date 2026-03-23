@@ -186,57 +186,32 @@ const TeacherProfile = () => {
           </div>
         </div>
       )} */}
-      {teacher && (
-  <div
-    className="
-      max-w-5xl mx-auto mb-12
-      bg-white/5 border border-white/10
-      rounded-2xl p-6
+      <div className="flex-1 min-w-0 text-center sm:text-left">
 
-      flex flex-col sm:flex-row
-      gap-5 items-center sm:items-start
-      text-center sm:text-left
-    "
-  >
+  {/* NAME */}
+  <h1 className="text-xl sm:text-2xl font-bold truncate">
+    {teacher.name}
+  </h1>
 
-    {/* IMAGE */}
-    <img
-      src={
-        teacher.imageId
-          ? storage
-              .getFileView(conf.appwriteBucketId, teacher.imageId)
-              .toString()
-          : "https://via.placeholder.com/150"
-      }
-      className="
-        w-24 h-24 sm:w-28 sm:h-28
-        rounded-full object-cover
-        flex-shrink-0
-      "
-    />
+  {/* DESIGNATION */}
+  <p className="
+    text-indigo-400 text-sm sm:text-base
+    break-all
+    line-clamp-2
+  ">
+    {teacher.designation}
+  </p>
 
-    {/* CONTENT */}
-    <div className="flex-1 min-w-0">
+  {/* ABOUT */}
+  <p className="
+    text-gray-400 mt-2 text-sm sm:text-base
+    break-all
+    line-clamp-3 sm:line-clamp-none
+  ">
+    {teacher.about}
+  </p>
 
-      <h1 className="text-xl sm:text-2xl font-bold truncate">
-        {teacher.name}
-      </h1>
-
-      <p className="text-indigo-400 text-sm sm:text-base truncate">
-        {teacher.designation}
-      </p>
-
-      <p className="
-        text-gray-400 mt-2 text-sm sm:text-base
-        line-clamp-3 sm:line-clamp-none
-        break-words
-      ">
-        {teacher.about}
-      </p>
-
-    </div>
-  </div>
-)}
+</div>
 
       {/* SECTIONS */}
       {TYPES.map((type) => (
