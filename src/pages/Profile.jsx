@@ -115,8 +115,7 @@ const Profile = () => {
 
     fetchData();
   }, []);
-
-  // 🔥 SUBMIT PROFILE (WITH LOCK)
+ // 🔥 SUBMIT PROFILE (WITH LOCK)
   const submit = async (data) => {
     const now = Date.now();
 
@@ -197,6 +196,87 @@ const Profile = () => {
       setSaving(false);
     }
   };
+  // // 🔥 SUBMIT PROFILE (WITH LOCK)
+  // const submit = async (data) => {
+  //   const now = Date.now();
+
+  //   // 🔒 UI LOCK
+  //   if (saving) return;
+
+  //   // 🔒 REF LOCK (instant)
+  //   if (now - submitLockRef.current < COOLDOWN) {
+  //     alert("⏳ Please wait a few seconds before saving again");
+  //     return;
+  //   }
+
+  //   submitLockRef.current = now;
+  //   setSaving(true);
+
+  //   try {
+  //     let user;
+  //     const authCache = JSON.parse(localStorage.getItem(AUTH_KEY));
+
+  //     if (authCache) {
+  //       user = authCache.user;
+  //     } else {
+  //       user = await account.get();
+  //     }
+
+  //     let imageId = profile?.imageId;
+
+  //     // Upload image
+  //     if (data.image?.[0]) {
+  //       const file = await storage.createFile(
+  //         conf.appwriteBucketId,
+  //         ID.unique(),
+  //         data.image[0]
+  //       );
+  //       imageId = file.$id;
+  //     }
+
+  //     let updatedProfile;
+
+  //     if (profile) {
+  //       updatedProfile = await databases.updateDocument(
+  //         conf.appwriteDatabaseId,
+  //         conf.appwriteCollectionId,
+  //         profile.$id,
+  //         {
+  //           designation: data.designation,
+  //           about: data.about,
+  //           imageId,
+  //         }
+  //       );
+  //     } else {
+  //       updatedProfile = await databases.createDocument(
+  //         conf.appwriteDatabaseId,
+  //         conf.appwriteCollectionId,
+  //         ID.unique(),
+  //         {
+  //           name: user.name,
+  //           designation: data.designation,
+  //           about: data.about,
+  //           imageId,
+  //           userId: user.$id,
+  //         }
+  //       );
+  //     }
+
+  //     setProfile(updatedProfile);
+  //     setEditMode(false);
+  //     setPreview(null);
+  //     reset();
+
+  //     // 🔥 CLEAR CACHE
+  //     localStorage.removeItem(CACHE_KEY);
+
+  //   } catch (error) {
+  //     console.log("Submit error:", error);
+  //     alert("Failed to save profile");
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
   if (loading) {
     return (
