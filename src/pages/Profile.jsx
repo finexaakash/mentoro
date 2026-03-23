@@ -228,87 +228,132 @@ const Profile = () => {
 
         {/* PROFILE VIEW */}
         {!editMode && profile && (
-          <div className="w-full bg-white/5 border border-white/10 rounded-xl p-8 backdrop-blur-xl">
-            <div className="flex flex-col md:flex-row md:items-center gap-6">
+  <div
+    className="
+      w-full max-w-5xl mx-auto
+      bg-white/5 border border-white/10
+      rounded-xl p-6 sm:p-8 backdrop-blur-xl
 
-              <div className="p-[2px] rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 w-fit">
-                <img
-                  src={imageUrl}
-                  className="w-24 h-24 rounded-full object-cover"
-                />
-              </div>
+      overflow-hidden
+    "
+  >
+    <div
+      className="
+        flex flex-col sm:flex-row
+        sm:items-center gap-6
+        text-center sm:text-left
+      "
+    >
 
-              <div className="flex-1">
-                <h2 className="text-2xl font-semibold">{profile.name}</h2>
-                <p className="text-indigo-400 text-sm">
-                  {profile.designation}
-                </p>
-                <span className="inline-block mt-1 px-2 py-1 text-xs bg-indigo-500/20 text-indigo-400 rounded">
-                  Teacher
-                </span>
-              </div>
+      {/* 🔥 IMAGE */}
+      <div className="p-[2px] rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 w-fit mx-auto sm:mx-0">
+        <img
+          src={imageUrl}
+          alt="profile"
+          className="
+            w-20 h-20 sm:w-24 sm:h-24
+            rounded-full object-cover
+          "
+        />
+      </div>
 
-              <button
-                onClick={() => setEditMode(true)}
-                className="px-5 py-2 border border-white/20 rounded-lg hover:bg-white/10 transition"
-              >
-                Edit Profile
-              </button>
-            </div>
+      {/* 🔥 INFO */}
+      <div className="flex-1 min-w-0">
 
-            <p className="text-gray-400 mt-6 max-w-3xl">
-              {profile.about}
-            </p>
+        <h2 className="text-xl sm:text-2xl font-semibold truncate">
+          {profile.name}
+        </h2>
 
-            {/* STATS */}
-            
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-10">
-              
-              {[
-                { label: "Notes", value: stats.notes },
-                { label: "Books", value: stats.books },
-                { label: "Videos", value: stats.videos },
-                { label: "Links", value: stats.links },
-              ].map((item) => (
-                
-                <div
-                  key={item.label}
-                  
-                    className="
-              relative group
-              p-6 rounded-xl text-center
-              bg-white/5 border border-white/10
+        <p
+          className="
+            text-indigo-400 text-sm
+            break-all line-clamp-2
+          "
+        >
+          {profile.designation}
+        </p>
+
+        <span className="inline-block mt-2 px-2 py-1 text-xs bg-indigo-500/20 text-indigo-400 rounded">
+          Teacher
+        </span>
+      </div>
+
+      {/* 🔥 BUTTON */}
+      <button
+        onClick={() => setEditMode(true)}
+        className="
+          px-5 py-2 border border-white/20
+          rounded-lg transition
+
+          hover:bg-white/10
+          self-center sm:self-auto
+        "
+      >
+        Edit Profile
+      </button>
+    </div>
+
+    {/* 🔥 ABOUT */}
+    <p
+      className="
+        text-gray-400 mt-6 text-sm sm:text-base
+        break-all line-clamp-3 sm:line-clamp-none
+      "
+    >
+      {profile.about}
+    </p>
+
+    {/* 🔥 STATS */}
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-8">
+
+      {[
+        { label: "Notes", value: stats.notes },
+        { label: "Books", value: stats.books },
+        { label: "Videos", value: stats.videos },
+        { label: "Links", value: stats.links },
+      ].map((item) => (
+        <div
+          key={item.label}
+          className="
+            relative group
+            p-4 sm:p-6 rounded-xl text-center
+            bg-white/5 border border-white/10
+
+            transition duration-300
+            hover:scale-105
+
+            overflow-hidden
+
+            shadow-[0_0_0px_rgba(99,102,241,0)]
+            group-hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]
+            group-hover:border-indigo-400/40
+          "
+        >
+          {/* INNER GLOW */}
+          <div
+            className="
+              absolute inset-0 rounded-xl
+              opacity-0 group-hover:opacity-100
               transition duration-300
-              hover:scale-105
-
-              shadow-[0_0_0px_rgba(99,102,241,0)]
-              group-hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]
-              group-hover:border-indigo-400/40
+              pointer-events-none
+              bg-gradient-to-br from-indigo-500/10 to-purple-500/10
             "
-          >
+          ></div>
 
-            {/* INNER GLOW */}
-            <div
-              className="
-                absolute inset-0 rounded-xl
-                opacity-0 group-hover:opacity-100
-                transition duration-300
-                pointer-events-none
-                bg-gradient-to-br from-indigo-500/10 to-purple-500/10
-              "
-            ></div>
-                
-                  <p className="text-2xl font-bold">{item.value}</p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {item.label}
-                  </p>
-                </div>
-                
-              ))}
-              
-            </div>
+          <div className="relative z-10">
+            <p className="text-xl sm:text-2xl font-bold">
+              {item.value}
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              {item.label}
+            </p>
           </div>
-        )}
+        </div>
+      ))}
+
+    </div>
+  </div>
+)}
 
         {/* FORM */}
         {(editMode || !profile) && (
