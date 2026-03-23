@@ -105,7 +105,7 @@ const Teachers = () => {
     <div className="min-h-screen text-white px-6 py-12">
 
       {/* HEADER */}
-      <div className="text-center mb-10 flex justify-between items-center max-w-7xl mx-auto">
+      {/* <div className="text-center mb-10 flex justify-between items-center max-w-7xl mx-auto">
         <div>
           <h1 className="text-3xl font-bold">Explore Teachers 👨‍🏫</h1>
           <p className="text-gray-400 mt-2">
@@ -119,7 +119,43 @@ const Teachers = () => {
         >
           🔄 Refresh
         </button>
-      </div>
+      </div> */}
+      <div className="
+  text-center mb-10
+  max-w-7xl mx-auto
+
+  flex flex-col gap-4
+  md:flex-row md:justify-between md:items-center
+">
+
+  {/* LEFT CONTENT */}
+  <div className="text-center md:text-left">
+    <h1 className="text-2xl md:text-3xl font-bold">
+      Explore Teachers 👨‍🏫
+    </h1>
+
+    <p className="text-gray-400 mt-2 text-sm md:text-base">
+      Learn from top contributors and faculty
+    </p>
+  </div>
+
+  {/* BUTTON */}
+  <button
+    onClick={handleRefresh}
+    className="
+      self-center md:self-auto
+      bg-indigo-600 hover:bg-indigo-700
+      px-4 py-2 rounded-lg text-sm
+      transition-all duration-300
+
+      hover:-translate-y-[1px]
+      hover:shadow-[0_0_15px_rgba(99,102,241,0.4)]
+    "
+  >
+    🔄 Refresh
+  </button>
+
+</div>
 
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
