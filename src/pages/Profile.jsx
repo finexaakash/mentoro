@@ -294,14 +294,14 @@
 //     </div>
 
 //     {/* 🔥 ABOUT */}
-//     {/* <p
+//     <p
 //       className="
 //         text-gray-400 mt-6 text-sm sm:text-base
 //         break-all line-clamp-3 sm:line-clamp-none
 //       "
 //     >
 //       {profile.about}
-//     </p> */}
+//     </p>
 
 //     {/* 🔥 STATS */}
 //     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-8">
@@ -459,6 +459,7 @@
 // };
 
 // export default Profile;
+
 import { useForm } from "react-hook-form";
 import { useEffect, useState, useRef } from "react";
 import { databases, storage, account } from "../lib/appwrite";
