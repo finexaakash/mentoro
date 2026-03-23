@@ -381,30 +381,46 @@ const Profile = () => {
               <div className="flex items-center gap-4">
 
   {/* IMAGE */}
+<div className="flex flex-col sm:flex-row items-center gap-4">
+
+  {/* IMAGE */}
   <img
     src={imageUrl}
     className="w-16 h-16 rounded-full object-cover border border-white/20"
   />
 
-  {/* HIDDEN INPUT */}
+  {/* 🔥 HIDDEN INPUT */}
   <input
-  
     type="file"
     accept="image/*"
-    className="
-      px-4 py-2 rounded-lg cursor-pointer font-medium
-      bg-indigo-500 hover:bg-indigo-600
-      transition-all duration-300
-
-      hover:-translate-y-[1px]
-      
-    "
+    id="fileUpload"
+    className="hidden"
     {...register("image")}
     onChange={(e) =>
       setPreview(URL.createObjectURL(e.target.files[0]))
     }
   />
 
+  {/* 🔥 BUTTON */}
+  <label
+    htmlFor="fileUpload"
+    className="
+      w-full sm:w-auto
+      text-center
+
+      px-4 py-2 rounded-lg cursor-pointer font-medium
+      bg-indigo-500 text-white
+
+      transition-all duration-300
+      hover:bg-indigo-600
+      hover:-translate-y-[1px]
+      hover:shadow-[0_0_15px_rgba(99,102,241,0.4)]
+    "
+  >
+    Upload Image
+  </label>
+
+</div>
   {/* CUSTOM BUTTON */}
  
 
