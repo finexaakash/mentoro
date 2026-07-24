@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { databases } from "../lib/appwrite";
+import { getSafeExternalUrl } from "../utils/links";
 import conf from "../conf/conf";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -31,6 +32,7 @@ const EditResource = () => {
         if (cache && Date.now() - cache.timestamp < CACHE_TIME) {
           setValue("title", cache.data.title);
           setValue("description", cache.data.description);
+          setValue("notesText", cache.data.notesText || cache.data.description);
           setValue("link", cache.data.link);
           setLoading(false);
           return;
@@ -44,6 +46,7 @@ const EditResource = () => {
 
         setValue("title", doc.title);
         setValue("description", doc.description);
+        setValue("notesText", doc.notesText || doc.description);
         setValue("link", doc.link);
 
         localStorage.setItem(
@@ -65,6 +68,10 @@ const EditResource = () => {
 
   // 🔥 UPDATE RESOURCE (WITH LOCK)
   const submit = async (data) => {
+    if (!getSafeExternalUrl(data.link)) {
+      alert("Please enter a valid http:// or https:// resource link.");
+      return;
+    }
     const now = Date.now();
 
     // 🔒 1. UI LOCK
@@ -96,6 +103,7 @@ const EditResource = () => {
         {
           title: data.title,
           description: data.description,
+          notesText: data.notesText || data.description,
           link: data.link,
         }
       );
@@ -153,6 +161,12 @@ const EditResource = () => {
           placeholder="Description"
           {...register("description")}
           className="w-full p-3 bg-transparent border border-white/20 rounded"
+        />
+
+        <textarea
+          placeholder="Study text for AI summary"
+          {...register("notesText")}
+          className="w-full min-h-32 p-3 bg-transparent border border-white/20 rounded"
         />
 
         <input

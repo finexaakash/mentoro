@@ -7,7 +7,7 @@ import { login } from "../store/authslice.js";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
-function Signup() {
+function Signup({ studentOnly = false }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -44,7 +44,10 @@ function Signup() {
 
     try {
       // ✅ SINGLE API CALL (optimized)
-      const userData = await authService.createAccount(data);
+      const userData = await authService.createAccount({
+        ...data,
+        role: studentOnly ? "student" : "teacher",
+      });
 
       if (!userData) throw new Error("Signup failed");
 
@@ -53,7 +56,7 @@ function Signup() {
       // optional cache
       localStorage.setItem("auth-cache", JSON.stringify(userData));
 
-      navigate("/");
+      navigate(studentOnly ? "/teachers" : "/profile");
 
     } catch (err) {
       setError(err.message || "Signup failed");
@@ -81,7 +84,7 @@ function Signup() {
         </div>
 
         <p className="text-center text-gray-400 text-sm mb-4">
-          Join UIET platform and start sharing knowledge
+          {studentOnly ? "Sign up to access resources and save bookmarks" : "Join Mentoro and start sharing knowledge"}
         </p>
 
         {/* Error */}
@@ -195,8 +198,8 @@ function Signup() {
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-400 hover:underline">
-            Sign in
+          <Link to={studentOnly ? "/student/login" : "/login"} className="text-indigo-400 hover:underline">
+            {studentOnly ? "Student login" : "Teacher login"}
           </Link>
         </p>
       </div>

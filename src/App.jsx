@@ -7,6 +7,9 @@ import authService from "./appwrite/auth";
 import { login, logout } from "./store/authslice";
 import { Footer, Header } from "./components";
 import { Outlet } from "react-router-dom";
+import { Query } from "appwrite";
+import { databases } from "./lib/appwrite";
+import conf from "./conf/conf";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -16,10 +19,32 @@ function App() {
   useEffect(() => {
     authService
       .getCurrentUser()
-      .then((userData) => {
-        if (userData) dispatch(login({ userData }));
-        else dispatch(logout());
+      .then(async (userData) => {
+        if (!userData) {
+          dispatch(logout());
+          return;
+        }
+
+        // Older accounts did not have a role preference. Classify them once
+        // so the header and routes can reliably distinguish students.
+        if (!userData.prefs?.role) {
+          try {
+            const profiles = await databases.listDocuments(
+              conf.appwriteDatabaseId,
+              conf.appwriteCollectionId,
+              [Query.equal("userId", userData.$id), Query.limit(1)]
+            );
+            userData = await authService.updatePreferences({
+              role: profiles.total > 0 ? "teacher" : "student",
+            });
+          } catch (error) {
+            console.warn("Could not classify account role:", error);
+          }
+        }
+
+        dispatch(login({ userData }));
       })
+      .catch(() => dispatch(logout()))
       .finally(() => {
         setLoading(false);
         setTimeout(() => setMounted(true), 150);

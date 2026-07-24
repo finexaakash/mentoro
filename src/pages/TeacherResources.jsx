@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { databases, account } from "../lib/appwrite";
 import conf from "../conf/conf";
 import { Query } from "appwrite";
+import { getSafeExternalUrl } from "../utils/links";
 import { useParams, useNavigate } from "react-router-dom";
 
 const TeacherResources = () => {
@@ -186,8 +187,8 @@ const TeacherResources = () => {
                 {/* ACTIONS */}
                 <div className="flex mt-6 gap-2">
 
-                  <a
-                    href={item.link}
+                  {getSafeExternalUrl(item.link) ? <a
+                    href={getSafeExternalUrl(item.link)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="
@@ -197,7 +198,7 @@ const TeacherResources = () => {
                     "
                   >
                     Open
-                  </a>
+                  </a> : <span className="flex-1 cursor-not-allowed rounded bg-slate-700 p-2 text-center text-slate-300">Invalid link</span>}
 
                   <button
                     onClick={() => navigate(`/edit/${item.$id}/${type}`)}

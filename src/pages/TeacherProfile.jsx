@@ -5,6 +5,12 @@ import { databases, storage } from "../lib/appwrite";
 import conf from "../conf/conf";
 import { Query } from "appwrite";
 import { useParams } from "react-router-dom";
+import { trackResourceOpen } from "../services/analytics";
+import AiSummaryModal from "../components/AiSummaryModal";
+import AiMcqModal from "../components/AiMcqModal";
+import BookmarkButton from "../components/BookmarkButton";
+import ResourceRating from "../components/ResourceRating";
+import { getSafeExternalUrl } from "../utils/links";
 
 const TYPES = ["notes", "books", "videos", "links"];
 
@@ -27,6 +33,7 @@ const TeacherProfile = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [aiAction, setAiAction] = useState(null);
 
   const LIMIT = 10;
   const CACHE_TIME = 5 * 60 * 1000;
@@ -43,7 +50,9 @@ const TeacherProfile = () => {
         [Query.equal("userId", userId)]
       );
 
-      setTeacher(res.documents[0] || null);
+      const profile = res.documents[0] || null;
+      setTeacher(profile);
+      return profile;
     } catch (err) {
       console.log("Teacher fetch error:", err);
     }
@@ -94,8 +103,11 @@ const TeacherProfile = () => {
     const load = async () => {
       setLoading(true);
 
-      await fetchTeacher();
-
+      const profile = await fetchTeacher();
+      if (!profile || profile.isPublic === false) {
+        setLoading(false);
+        return;
+      }
       await Promise.all(
         TYPES.map((type) => fetchResources(type, pages[type]))
       );
@@ -148,6 +160,10 @@ const TeacherProfile = () => {
         Loading...
       </div>
     );
+  }
+
+  if (!teacher || teacher.isPublic === false) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-400">This teacher profile is not available.</div>;
   }
 
   return (
@@ -291,19 +307,22 @@ const TeacherProfile = () => {
                   blur-xl pointer-events-none
                 "
               ></div>
-                    
-                    <h3 className="font-semibold text-lg">{item.title}</h3>
+              <BookmarkButton item={item} iconOnly />
+                     
+                    <h3 className="pr-10 font-semibold text-lg">{item.title}</h3>
                     <p className="text-sm text-gray-400 mt-2">
                       {item.description}
                     </p>
+                    <ResourceRating resource={item} />
 
-                    
-                    <a
-  href={item.link}
+                    <div className="mt-4 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+                      {getSafeExternalUrl(item.link) ? <a
+                        href={getSafeExternalUrl(item.link)}
   target="_blank"
   rel="noopener noreferrer"
+  onClick={() => trackResourceOpen(item)}
   className="
-    inline-block mt-4 w-20 text-center
+    inline-flex w-20 shrink-0 items-center justify-center text-center
     bg-indigo-500 hover:bg-indigo-600
     text-white text-sm font-medium
     py-2 rounded-lg
@@ -311,7 +330,22 @@ const TeacherProfile = () => {
   "
 >
   Open →
-</a>
+                      </a> : <span className="inline-flex w-20 shrink-0 items-center justify-center rounded-lg bg-slate-700 py-2 text-sm text-slate-300">Invalid link</span>}
+                    <button
+                      onClick={() => setAiAction({ type: "summary", item })}
+                      className="shrink-0 rounded-lg border border-indigo-400/50 px-3 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-500/10"
+                    >
+                      AI summary
+                    </button>
+                    {type === "notes" && (
+                      <button
+                        onClick={() => setAiAction({ type: "mcq", item })}
+                        className="shrink-0 rounded-lg border border-purple-400/50 px-3 py-2 text-sm font-medium text-purple-200 hover:bg-purple-500/10"
+                      >
+                        AI MCQs
+                      </button>
+                    )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -360,6 +394,12 @@ const TeacherProfile = () => {
           )}
         </div>
       ))}
+      {aiAction?.type === "summary" && (
+        <AiSummaryModal item={aiAction.item} onClose={() => setAiAction(null)} />
+      )}
+      {aiAction?.type === "mcq" && (
+        <AiMcqModal item={aiAction.item} onClose={() => setAiAction(null)} />
+      )}
     </div>
   );
 };

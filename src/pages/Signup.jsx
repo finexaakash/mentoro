@@ -1,8 +1,8 @@
 import { Signup as SignupComponent } from '../../src/components'
-function Signup() {
+function Signup({ studentOnly = false }) {
   return (
     <div className='py-8'>
-        <SignupComponent />
+        <SignupComponent studentOnly={studentOnly} />
     </div>
   )
 }

@@ -1,15 +1,19 @@
 
 
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authslice";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Logo } from "./index";
+import { databases } from "../lib/appwrite";
+import conf from "../conf/conf";
+import { Query } from "appwrite";
 
-function Login() {
+function Login({ studentOnly = false }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const {
@@ -35,9 +39,25 @@ function Login() {
 
     try {
       // ✅ SINGLE API CALL (optimized)
-      const userData = await authService.login(data);
+      let userData = await authService.login(data);
 
       if (!userData) throw new Error("User not found");
+      if (studentOnly && userData.prefs?.role !== "student") {
+        const teacherProfile = await databases.listDocuments(
+          conf.appwriteDatabaseId,
+          conf.appwriteCollectionId,
+          [Query.equal("userId", userData.$id), Query.limit(1)]
+        );
+
+        if (teacherProfile.total > 0) {
+          await authService.logout();
+          throw new Error("This account has a teacher profile. Please use Teacher login.");
+        }
+
+        // An account without a saved teacher profile can safely become a
+        // student when the owner deliberately uses Student login.
+        userData = await authService.updatePreferences({ role: "student" });
+      }
 
       // Redux update
       dispatch(authLogin(userData));
@@ -45,7 +65,7 @@ function Login() {
       // Optional: cache auth (if you use it)
       localStorage.setItem("auth-cache", JSON.stringify(userData));
 
-      navigate("/profile");
+      navigate(location.state?.from || (studentOnly ? "/teachers" : "/profile"), { replace: true });
 
     } catch (err) {
       setError(err.message || "Login failed");
@@ -77,7 +97,7 @@ function Login() {
         </h2>
 
         <p className="mt-2 text-center text-gray-400 text-sm">
-          Sign in to continue
+          {studentOnly ? "Sign in to access resources and bookmarks" : "Sign in to Access resources"}
         </p>
 
         {/* Error */}
@@ -152,12 +172,18 @@ function Login() {
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Don’t have an account?{" "}
-          <Link
-            to="/signup"
+          {/* <Link
+            to={studentOnly ? "/student/signup" : "/signup"}
             className="text-indigo-400 hover:underline"
           >
-            Create account
-          </Link>
+            {studentOnly ? "Create student account" : "Create teacher account"}
+          </Link> */}
+          {!studentOnly && (
+            <>
+              {" or "}
+              <Link to="/student/signup" className="text-indigo-400 hover:underline">create student account</Link>
+            </>
+          )}
         </p>
       </div>
     </div>

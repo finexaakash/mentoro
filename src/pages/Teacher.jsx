@@ -5,6 +5,7 @@ import { databases, storage } from "../lib/appwrite";
 import conf from "../conf/conf";
 import { useNavigate } from "react-router-dom";
 import { Query } from "appwrite";
+import { trackProfileViewOnce } from "../services/analytics";
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([]);
@@ -25,7 +26,7 @@ const Teachers = () => {
 
     // ✅ USE CACHE
     if (cache && Date.now() - cache.timestamp < CACHE_TIME) {
-      setTeachers(cache.data);
+      setTeachers(cache.data.filter((teacher) => teacher.isPublic !== false));
       setLoading(false);
       return;
     }
@@ -43,13 +44,14 @@ const Teachers = () => {
         ]
       );
 
-      setTeachers(res.documents);
+      const publicTeachers = res.documents.filter((teacher) => teacher.isPublic !== false);
+      setTeachers(publicTeachers);
 
       // ✅ SAVE CACHE
       localStorage.setItem(
         cacheKey,
         JSON.stringify({
-          data: res.documents,
+            data: publicTeachers,
           timestamp: Date.now(),
         })
       );
@@ -170,7 +172,10 @@ const Teachers = () => {
 
             <div
   key={t.$id}
-  onClick={() => navigate(`/teacher/${t.userId}`)}
+  onClick={() => {
+    trackProfileViewOnce(t.userId);
+    navigate(`/teacher/${t.userId}`);
+  }}
   className="
     relative group cursor-pointer
     rounded-2xl overflow-hidden

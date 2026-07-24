@@ -11,11 +11,16 @@ export class AuthService {
     
   }
 
-  async createAccount({ email, password, name }) {
+  async createAccount({ email, password, name, role }) {
     try {
       const userAccount = await this.account.create(ID.unique(), email, password, name);
       if (userAccount) {
-        return this.login({ email, password });
+        const user = await this.login({ email, password });
+        if (role) {
+          await this.account.updatePrefs({ role });
+          return await this.account.get();
+        }
+        return user;
       }
       return userAccount;
     } catch (error) {
@@ -54,6 +59,16 @@ export class AuthService {
       return await this.account.get();
     } catch (error) {
       return null;
+    }
+  }
+  async updatePreferences(preferences) {
+    try {
+      const user = await this.account.get();
+      await this.account.updatePrefs({ ...user.prefs, ...preferences });
+      return await this.account.get();
+    } catch (error) {
+      console.log("Update preferences error:", error);
+      throw error;
     }
   }
   async updateName(name) {

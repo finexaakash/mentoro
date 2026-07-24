@@ -466,6 +466,7 @@ import { databases, storage, account } from "../lib/appwrite";
 import conf from "../conf/conf";
 import { ID, Query } from "appwrite";
 import { useNavigate } from "react-router-dom";
+import TeacherAnalytics from "../components/TeacherAnalytics";
 
 const Profile = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -477,6 +478,15 @@ const Profile = () => {
     videos: 0,
     links: 0,
   });
+  const [analytics, setAnalytics] = useState({
+    profileViews: 0,
+    totalOpens: 0,
+    notes: 0,
+    books: 0,
+    videos: 0,
+    links: 0,
+  });
+  const [analyticsEvents, setAnalyticsEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -541,8 +551,43 @@ const Profile = () => {
         }
       });
 
+      const analyticsCount = async (queries) => {
+        const result = await databases.listDocuments(
+          conf.appwriteDatabaseId,
+          conf.appwriteAnalyticsCollectionId,
+          [...queries, Query.limit(1)]
+        );
+        return result.total;
+      };
+
+      let analyticsData = { profileViews: 0, totalOpens: 0, notes: 0, books: 0, videos: 0, links: 0 };
+      let analyticsEventsData = [];
+      if (conf.appwriteAnalyticsCollectionId) {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+        const [profileViews, totalOpens, notes, books, videos, links, recentEvents] = await Promise.all([
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "profile_view")]),
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "resource_open")]),
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "resource_open"), Query.equal("resourceType", "notes")]),
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "resource_open"), Query.equal("resourceType", "books")]),
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "resource_open"), Query.equal("resourceType", "videos")]),
+          analyticsCount([Query.equal("teacherId", user.$id), Query.equal("eventType", "resource_open"), Query.equal("resourceType", "links")]),
+          databases.listDocuments(conf.appwriteDatabaseId, conf.appwriteAnalyticsCollectionId, [
+            Query.equal("teacherId", user.$id),
+            Query.greaterThanEqual("$createdAt", sevenDaysAgo.toISOString()),
+            Query.orderAsc("$createdAt"),
+            Query.limit(100),
+          ]),
+        ]);
+        analyticsData = { profileViews, totalOpens, notes, books, videos, links };
+        analyticsEventsData = recentEvents.documents;
+      }
+
       setProfile(profileData);
       setStats(count);
+      setAnalytics(analyticsData);
+      setAnalyticsEvents(analyticsEventsData);
 
       // ✅ CACHE SAVE
       localStorage.setItem(
@@ -550,6 +595,8 @@ const Profile = () => {
         JSON.stringify({
           profile: profileData,
           stats: count,
+          analytics: analyticsData,
+          analyticsEvents: analyticsEventsData,
           timestamp: Date.now(),
         })
       );
@@ -567,8 +614,8 @@ const Profile = () => {
     if (cache && Date.now() - cache.timestamp < CACHE_TIME) {
       setProfile(cache.profile);
       setStats(cache.stats);
-      setLoading(false);
-      return;
+      setAnalytics(cache.analytics || { profileViews: 0, totalOpens: 0, notes: 0, books: 0, videos: 0, links: 0 });
+      setAnalyticsEvents(cache.analyticsEvents || []);
     }
 
     fetchData();
@@ -623,6 +670,7 @@ const Profile = () => {
             designation: data.designation,
             about: data.about,
             imageId,
+            isPublic: data.isPublic,
           }
         );
       } else {
@@ -636,6 +684,7 @@ const Profile = () => {
             about: data.about,
             imageId,
             userId: user.$id,
+            isPublic: data.isPublic,
           }
         );
       }
@@ -792,6 +841,8 @@ const Profile = () => {
                 </div>
               ))}
             </div>
+
+            <TeacherAnalytics analytics={analytics} events={analyticsEvents} />
           </div>
         )}
 
@@ -848,6 +899,16 @@ const Profile = () => {
                 {...register("about", { required: true })}
                 className="w-full p-3 rounded-lg bg-transparent border border-white/20"
               />
+
+              <label className="flex items-center gap-3 text-sm text-gray-300">
+                <input
+                  type="checkbox"
+                  defaultChecked={profile?.isPublic !== false}
+                  {...register("isPublic")}
+                  className="h-4 w-4 accent-indigo-500"
+                />
+                Show my profile to students
+              </label>
 
               <div className="flex gap-3">
                 <button

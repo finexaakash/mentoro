@@ -60,9 +60,9 @@ function Home() {
 
         <Container>
           <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-            Learn Smarter.
+            Learn Smarter
             <br />
-            <span className="text-indigo-400">Grow Faster 🚀</span>
+            <span className="text-indigo-400">Grow Faster </span>
           </h1>
 
           <p className="mt-5 text-gray-300 max-w-xl mx-auto">

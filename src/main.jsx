@@ -19,12 +19,12 @@ import AddResource from "./pages/AddResource.jsx"
 import EditResource from "./pages/EditResource.jsx";
 import ExploreResources from "./pages/ExploreResources";
 import NotFound from "./pages/NotFound.jsx";
+import Bookmarks from "./pages/Bookmarks.jsx";
+import StudentOnly from "./components/StudentOnly.jsx";
+import TeacherOnly from "./components/TeacherOnly.jsx";
 
 
 
-account.get().catch(() => {
-  console.log("No active session");
-});
 const router = createBrowserRouter([
   
   {
@@ -33,29 +33,33 @@ const router = createBrowserRouter([
     children: [
     { path: "/", element: <Home /> },
     
-    { path: "/profile", element: <Profile /> },
-      { path: "/teachers", element: <Teachers /> },
+    { path: "/profile", element: <AuthLayout><TeacherOnly><Profile /></TeacherOnly></AuthLayout> },
+      { path: "/teachers", element: <AuthLayout loginPath="/student/login"><Teachers /></AuthLayout> },
       {
   path: "/dashboard",
-  element: <TeacherDashboard />,
+  element: <AuthLayout><TeacherOnly><TeacherDashboard /></TeacherOnly></AuthLayout>,
 },
 {path: "*", element:<NotFound/>},
-{path:"/explore/:type", element:<ExploreResources />},
+{path:"/explore/:type", element:<AuthLayout loginPath="/student/login"><ExploreResources /></AuthLayout>},
 {
   path: "/resources/:type",
-  element: <TeacherResources />,
+  element: <AuthLayout><TeacherOnly><TeacherResources /></TeacherOnly></AuthLayout>,
 },
 {
   path: "/add/:type",
-  element: <AddResource />,
+  element: <AuthLayout><TeacherOnly><AddResource /></TeacherOnly></AuthLayout>,
 },
 {
   path: "/teacher/:userId",
-  element: <TeacherProfile />,
+  element: <AuthLayout loginPath="/student/login"><TeacherProfile /></AuthLayout>,
 },
 {
   path: "/edit/:id/:type",
-  element: <EditResource />,
+  element: <AuthLayout><TeacherOnly><EditResource /></TeacherOnly></AuthLayout>,
+},
+{
+  path: "/bookmarks",
+  element: <AuthLayout><StudentOnly><Bookmarks /></StudentOnly></AuthLayout>,
 },
 
       {
@@ -71,6 +75,22 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
             <Signup />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/student/login",
+        element: (
+          <AuthLayout authentication={false}>
+            <Login studentOnly />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/student/signup",
+        element: (
+          <AuthLayout authentication={false}>
+            <Signup studentOnly />
           </AuthLayout>
         ),
       },

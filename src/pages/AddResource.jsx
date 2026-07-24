@@ -2,7 +2,8 @@
 import { useForm } from "react-hook-form";
 import { databases, account } from "../lib/appwrite";
 import conf from "../conf/conf";
-import { ID, Query } from "appwrite";
+import { ID, Permission, Query, Role } from "appwrite";
+import { getSafeExternalUrl } from "../utils/links";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
@@ -118,6 +119,10 @@ const AddResource = () => {
 
   // 🔥 SUBMIT (OPTIMIZED)
   const submit = async (data) => {
+    if (!getSafeExternalUrl(data.link)) {
+      alert("Please enter a valid http:// or https:// resource link.");
+      return;
+    }
     const now = Date.now();
 
     if (loading) return;
@@ -147,14 +152,7 @@ const AddResource = () => {
     setLoading(true);
 
     try {
-      let user;
-      const cache = JSON.parse(localStorage.getItem(AUTH_KEY));
-
-      if (cache && Date.now() - cache.timestamp < CACHE_TIME) {
-        user = cache.user;
-      } else {
-        user = await account.get();
-      }
+      const user = await account.get();
 
       // ✅ ONLY API CALL NOW
       await databases.createDocument(
@@ -164,10 +162,16 @@ const AddResource = () => {
         {
           title: data.title,
           description: data.description,
+          notesText: data.notesText || data.description,
           link: data.link,
           type,
           userId: user.$id,
-        }
+        },
+        [
+          Permission.read(Role.users()),
+          Permission.update(Role.user(user.$id)),
+          Permission.delete(Role.user(user.$id)),
+        ]
       );
 
       // 🔥 UPDATE CACHE (NO API NEEDED)
@@ -234,6 +238,8 @@ const AddResource = () => {
         <input {...register("title", { required: true })} placeholder="Title" className="w-full p-3 mb-3 bg-transparent border border-white/20 rounded" />
 
         <textarea {...register("description", { required: true })} placeholder="Description" className="w-full p-3 mb-3 bg-transparent border border-white/20 rounded" />
+
+        <textarea {...register("notesText")} placeholder="Study text for AI summary (optional, but recommended)" className="w-full min-h-32 p-3 mb-3 bg-transparent border border-white/20 rounded" />
 
         <input {...register("link", { required: true })} placeholder="Link" className="w-full p-3 mb-4 bg-transparent border border-white/20 rounded" />
 

@@ -7,6 +7,8 @@ import { useState } from "react";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
+  const userData = useSelector((state) => state.auth.userData);
+  const isStudent = userData?.prefs?.role === "student";
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,8 +16,9 @@ function Header() {
   const navItems = [
     { name: "Home", slug: "/", active: true },
     { name: "Teachers", slug: "/teachers", active: true },
-    { name: "Dashboard", slug: "/dashboard", active: authStatus },
-    { name: "Profile", slug: "/profile", active: authStatus },
+    { name: "Bookmarks", slug: "/bookmarks", active: authStatus && isStudent },
+    { name: "Dashboard", slug: "/dashboard", active: authStatus && !isStudent },
+    { name: "Profile", slug: "/profile", active: authStatus && !isStudent },
     // { name: "Login", slug: "/login", active: !authStatus },
     // { name: "Signup", slug: "/signup", active: !authStatus },
   ];
@@ -28,7 +31,7 @@ function Header() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <Logo width="45px" />
+            <Logo width="45px" showText={false} />
             <span className="text-white font-semibold text-lg hidden sm:block">
               Mentoro
             </span>
@@ -66,8 +69,15 @@ function Header() {
             )}
 
             {authStatus && (
-              <li className="ml-4">
+              <li className="ml-4 flex items-center gap-3">
+                {isStudent && <span className="max-w-32 truncate text-sm font-medium text-indigo-200">Hi, {userData?.name}</span>}
                 <LogoutBtn />
+              </li>
+            )}
+            {!authStatus && (
+              <li className="flex items-center gap-3">
+                <Link to="/student/login" className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600">Student login</Link>
+                {/* <Link to="/student/signup" className="text-sm font-medium text-indigo-300 hover:text-white">Student signup</Link> */}
               </li>
             )}
           </ul>
@@ -116,7 +126,14 @@ function Header() {
 
             {authStatus && (
               <li className="pt-2">
+                {isStudent && <p className="mb-2 px-4 text-sm text-indigo-200">Hi, {userData?.name}</p>}
                 <LogoutBtn />
+              </li>
+            )}
+            {!authStatus && (
+              <li className="grid grid-cols-2 gap-2 pt-2">
+                <Link to="/student/login" onClick={() => setMenuOpen(false)} className="rounded-lg bg-indigo-500 px-4 py-3 text-center text-sm text-white">Student login</Link>
+                <Link to="/student/signup" onClick={() => setMenuOpen(false)} className="rounded-lg border border-indigo-400/50 px-4 py-3 text-center text-sm text-indigo-200">Student signup</Link>
               </li>
             )}
           </ul>
