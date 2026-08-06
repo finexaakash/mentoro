@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { createNoteSummary } from "../services/aiSummary";
 
+const formatSummary = (value) => value
+  .replace(/^\s{0,3}#{1,6}\s*/gm, "")
+  .replace(/^\s*[-*+]\s+/gm, "• ")
+  .trim();
+
 const AiSummaryModal = ({ item, onClose }) => {
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
@@ -9,7 +14,7 @@ const AiSummaryModal = ({ item, onClose }) => {
 
   const generateSummary = async () => {
     setLoading(true); setError("");
-    try { setSummary(await createNoteSummary({ title: item.title, text: sourceText })); }
+    try { setSummary(formatSummary(await createNoteSummary({ title: item.title, text: sourceText }))); }
     catch (err) { setError(err.message || "Could not create the summary."); }
     finally { setLoading(false); }
   };

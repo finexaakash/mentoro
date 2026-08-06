@@ -15,7 +15,7 @@ export default async ({ req, res, error }) => {
 
   const systemPrompt = task === "mcq"
     ? `Create exactly ${count} accurate multiple-choice practice questions for a student. Return ONLY valid JSON, with no markdown or code fence, in this shape: {"mcqs":[{"question":"...","options":["option A","option B","option C","option D"],"answer":"A","explanation":"short reason"}]}. Use only the supplied note text. Each question must have exactly four options and one correct answer.`
-    : "Create an accurate, student-friendly study summary. Use short headings and bullets. Include key ideas, important terms, and 3 revision questions. Only use supplied text; say when information is missing.";
+    : "Create an accurate, student-friendly study summary using point-wise bullet lists. Do not use Markdown headings, # symbols, asterisks, or numbered headings. Start each point with the bullet character •. Group points under plain-text labels such as Key ideas, Important terms, and Revision questions, followed by bullet points. Include 3 revision questions. Only use supplied text; say when information is missing.";
 
   try {
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
